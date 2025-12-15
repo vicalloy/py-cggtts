@@ -1,0 +1,33 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "cggtts"
+version = "0.1.0"
+description = "Python bindings for the cggtts Rust library (BIPM CGGTTS 2E parser)"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL-2.0)",
+]
+
+[tool.uv]
+
+[[tool.uv.index]]
+name = "bfsu"
+url = "https://mirrors.aliyun.com/pypi/simple/"
+default = true
+
+
+[tool.maturin]
+module-name = "cggtts"
+manifest-path = "py/Cargo.toml"
+features = ["pyo3/extension-module"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+]

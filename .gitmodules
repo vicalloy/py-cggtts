@@ -1,0 +1,3 @@
+[submodule "cggtts"]
+	path = cggtts
+	url = https://github.com/nav-solutions/cggtts.git

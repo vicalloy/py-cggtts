@@ -1,0 +1,15 @@
+[package]
+name = "py_cggtts"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "cggtts"
+crate-type = ["cdylib"]  # 必须是 cdylib 才能被 Python 加载
+
+[dependencies]
+# 引用本地子模块中的 cggtts
+cggtts = { path = "../cggtts" }
+
+# PyO3：用于生成 Python 绑定
+pyo3 = { version = "0.27.2", features = ["extension-module"] }
