@@ -47,6 +47,9 @@ init-builder:
 		cd /app/;maturin build --release  --interpreter python3.10 --strip
 	"
 
+release:
+		maturin build --release --strip
+
 release-armv7: init-builder
 	docker exec -it $(app-name)-$(platform)-builder bash -c "\
 		cd /app/;maturin build --release  --interpreter python3.10 --strip
