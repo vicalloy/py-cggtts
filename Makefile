@@ -15,10 +15,6 @@ endif
 dev:
 	maturin develop 
 
-.PHONY: build
-build:
-	maturin build
-
 .PHONY: test
 test:
 	. .venv/bin/activate && python -m pytest tests/ -v
@@ -54,6 +50,7 @@ init-builder:
 		pip3 install -i https://mirrors.aliyun.com/pypi/simple/ maturin && \
 		cd /app/;maturin build --release  --interpreter python3.10 --strip"
 
+.PHONY: release
 release:
 		maturin build --release --strip
 
