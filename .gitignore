@@ -4,10 +4,41 @@ target/
 # Python-generated files
 __pycache__/
 *.py[oc]
+*.pyc
+*.pyo
+.Python
 build/
 dist/
 wheels/
 *.egg-info
+*.so
+*.dylib
+*.dll
 
 # Virtual environments
 .venv
+venv/
+env/
+
+# Rust build artifacts
+**/*.rs.bk
+.rustc_info.json
+
+# Python dev tools
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.pyre/
+.pytype/
+.hypothesis/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

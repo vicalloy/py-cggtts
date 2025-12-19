@@ -13,7 +13,7 @@ endif
 
 
 dev:
-	maturin develop 
+	maturin develop
 
 .PHONY: test
 test:
@@ -29,6 +29,12 @@ shell:
 	@echo "copy and paste the following command to activate the virtual environment"
 	@echo "source .venv/bin/activate"
 
+init-pre-commit:
+	pre-commit install
+	pre-commit run --all-files
+
+update-pre-commit:
+	pre-commit autoupdate
 
 docker-start-builder:
 	docker run \

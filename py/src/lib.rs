@@ -17,7 +17,7 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
         .map_err(|e| PyErr::new::<pyo3::exceptions::PyValueError, _>(format!("Parse error: {}", e)))?;
 
     let result = PyDict::new(py);
-    
+
     // Header section
     result.set_item("station", &cgg.header.station)?;
     result.set_item("version", &cgg.header.version.to_string())?;
@@ -25,7 +25,7 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
     result.set_item("nb_channels", cgg.header.nb_channels)?;
     result.set_item("reference_time", &cgg.header.reference_time.to_string())?;
     result.set_item("reference_frame", &cgg.header.reference_frame)?;
-    
+
     // Receiver hardware info
     let receiver_dict = PyDict::new(py);
     receiver_dict.set_item("manufacturer", &cgg.header.receiver.manufacturer)?;
@@ -34,25 +34,25 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
     receiver_dict.set_item("year", cgg.header.receiver.year)?;
     receiver_dict.set_item("release", &cgg.header.receiver.release)?;
     result.set_item("receiver", receiver_dict)?;
-    
+
     // APC coordinates
     let coords_dict = PyDict::new(py);
     coords_dict.set_item("x", cgg.header.apc_coordinates.x)?;
     coords_dict.set_item("y", cgg.header.apc_coordinates.y)?;
     coords_dict.set_item("z", cgg.header.apc_coordinates.z)?;
     result.set_item("apc_coordinates", coords_dict)?;
-    
+
     // Comments if any
     if let Some(comment) = &cgg.header.comments {
         result.set_item("comments", comment)?;
     }
-    
+
     // System delay info
     let delay_dict = PyDict::new(py);
     delay_dict.set_item("antenna_cable_delay", cgg.header.delay.antenna_cable_delay)?;
     delay_dict.set_item("local_ref_delay", cgg.header.delay.local_ref_delay)?;
     delay_dict.set_item("total_cable_delay_nanos", cgg.header.delay.total_cable_delay_nanos())?;
-    
+
     if let Some(calibration) = &cgg.header.delay.calibration_id {
         let cal_dict = PyDict::new(py);
         cal_dict.set_item("process_id", calibration.process_id)?;
@@ -60,7 +60,7 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
         delay_dict.set_item("calibration_id", cal_dict)?;
     }
     result.set_item("delay", delay_dict)?;
-    
+
     // IMS hardware if available
     if let Some(ims) = &cgg.header.ims_hardware {
         let ims_dict = PyDict::new(py);
@@ -71,12 +71,12 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
         ims_dict.set_item("release", &ims.release)?;
         result.set_item("ims_hardware", ims_dict)?;
     }
-    
+
     result.set_item("tracks_count", cgg.tracks.len())?;
     result.set_item("has_ionospheric_data", cgg.has_ionospheric_data())?;
     result.set_item("common_view_class", &cgg.common_view_class().to_string())?;
     result.set_item("follows_bipm_tracking", cgg.follows_bipm_tracking())?;
-    
+
     // Add satellite constellation info
     result.set_item("is_gps", cgg.is_gps_cggtts())?;
     result.set_item("is_galileo", cgg.is_galileo_cggtts())?;
@@ -85,7 +85,7 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
     result.set_item("is_qzss", cgg.is_qzss_cggtts())?;
     result.set_item("is_irnss", cgg.is_irnss_cggtts())?;
     result.set_item("is_sbas", cgg.is_sbas_cggtts())?;
-    
+
     // Add all tracks info
     let tracks_list = PyList::empty(py);
     for track in cgg.tracks.iter() {
@@ -98,7 +98,7 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
         track_dict.set_item("azimuth_deg", track.azimuth_deg)?;
         track_dict.set_item("frc", &track.frc)?;
         track_dict.set_item("hc", track.hc)?;
-        
+
         // Track data
         let data_dict = PyDict::new(py);
         data_dict.set_item("refsv", track.data.refsv)?;
@@ -112,12 +112,12 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
         data_dict.set_item("mdio", track.data.mdio)?;
         data_dict.set_item("smdi", track.data.smdi)?;
         track_dict.set_item("data", data_dict)?;
-        
+
         // FDMA channel for GLONASS
         if let Some(fdma) = track.fdma_channel {
             track_dict.set_item("fdma_channel", fdma)?;
         }
-        
+
         // Ionospheric data if available
         if let Some(iono) = track.iono {
             let iono_dict = PyDict::new(py);
@@ -126,11 +126,11 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
             iono_dict.set_item("isg", iono.isg)?;
             track_dict.set_item("ionospheric_data", iono_dict)?;
         }
-        
+
         tracks_list.append(track_dict)?;
     }
     result.set_item("tracks", tracks_list)?;
-    
+
     // Add total duration if available
     if let Some(first_epoch) = cgg.first_epoch() {
         if let Some(last_epoch) = cgg.last_epoch() {
@@ -144,7 +144,7 @@ fn parse_cggtts(path: &str, py: Python) -> PyResult<Py<PyAny>> {
 }
 
 #[pymodule]
-fn cggtts(_py: Python, m: &Bound<PyModule>) -> PyResult<()> {
+fn cggtts(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(parse_cggtts, m)?)?;
     Ok(())
 }
